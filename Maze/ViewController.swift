@@ -37,8 +37,11 @@ class ViewController: UIViewController {
     func createView(x: Int, y: Int, width: CGFloat, height: CGFloat, offsetX: CGFloat, offsetY: CGFloat) -> UIView{
         let rect = CGRect(x: 0, y: 0, width: width, height: height)
         let view = UIView(frame: rect)
-        let center = CGPoint(x: offsetX + width * CGFloat(x), y: offsetY+height*CGFloat(y))
+        
+        let center = CGPoint(x: offsetX + width * CGFloat(x), y: offsetY + height * CGFloat(y))
+        
         view.center = center
+        
         return view
     }
     
@@ -56,15 +59,15 @@ class ViewController: UIViewController {
             }
             if posY <= self.playerView.frame.height/2 {
                 self.speedy = 0
-                posX = self.playerView.frame.height/2
+                posY = self.playerView.frame.height/2
             }
             if posX >= self.screenSize.width - (self.playerView.frame.width/2){
                 self.speedx = 0
                 posX = self.screenSize.width - (self.playerView.frame.width/2)
             }
-            if posX >= self.screenSize.height - (self.playerView.frame.height/2){
-            self.speedy = 0
-                posX = self.screenSize.height - (self.playerView.frame.height/2)
+            if posY >= self.screenSize.height - (self.playerView.frame.height/2){
+                self.speedy = 0
+                posY = self.screenSize.height - (self.playerView.frame.height/2)
             }
             for wallRect in self.wallRectArray {
                 if wallRect.intersects(self.playerView.frame) {
@@ -104,28 +107,30 @@ class ViewController: UIViewController {
         speedx = 0.0
         speedy = 0.0
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         let cellWidth = screenSize.width / CGFloat(maze[0].count)
         let cellHeight = screenSize.height/CGFloat(maze.count)
-        let cellOffsetX = cellWidth/2
-        let cellOffsetY = cellHeight/2
+        
+        let cellOffsetX = screenSize.width / CGFloat(maze[0].count*2)
+        let cellOffsetY = screenSize.height / CGFloat(maze.count*2)
         
         for y in 0 ..< maze.count {
             for x in 0 ..< maze[y].count {
                 switch maze[y][x] {
                 case 1:
-                    let wallView = createView(x: x, y: y, width: cellWidth, height: cellHeight, offsetX: cellOffsetX, offsetY: cellOffsetY )
+                    let wallView = createView(x: x, y: y, width: cellWidth, height: cellHeight, offsetX: cellOffsetX, offsetY: cellOffsetY)
                     wallView.backgroundColor = UIColor.black
                     view.addSubview(wallView)
                     wallRectArray.append(wallView.frame)
                 case 2:
-                    startview = createView(x: x, y: y, width: cellWidth, height: cellHeight, offsetX: cellOffsetY, offsetY: cellOffsetY)
+                    startview = createView(x: x, y: y, width: cellWidth, height: cellHeight, offsetX: cellOffsetX, offsetY: cellOffsetY)
                     startview.backgroundColor = UIColor.green
                     view.addSubview(startview)
                 case 3:
-                    goalview = createView(x: x, y: y, width: cellWidth, height: cellHeight, offsetX: cellOffsetY, offsetY: cellOffsetY)
+                    goalview = createView(x: x, y: y, width: cellWidth, height: cellHeight, offsetX: cellOffsetX, offsetY: cellOffsetY)
                     goalview.backgroundColor = UIColor.red
                     view.addSubview(goalview)
                 default:
@@ -138,8 +143,10 @@ class ViewController: UIViewController {
         playerView.center = startview.center
         playerView.backgroundColor = UIColor.gray
         view.addSubview(playerView)
+        
         playerMotionManager = CMMotionManager()
         playerMotionManager.accelerometerUpdateInterval = 0.02
+        
         startAccelerometer()
     }
 }
